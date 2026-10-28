@@ -1,0 +1,363 @@
+commit 743f72e7cd05886bca74ab7124ee9aced5fe4d83
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Wed Oct 28 15:29:53 2026 +0500
+
+    Debug and improvement for receiving udp packets from another subnet
+
+commit c59e730a3cecc7300c4f06b2898915365b531731
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri Sep 11 16:24:56 2026 +0500
+
+    Дорботка стабильности при отключении вкладок DTP
+
+commit 88f9704382dd35ed9315996c694e7fbd2a8b812f
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri Sep 11 16:07:56 2026 +0500
+
+    Исправлено отображение RAW значений и отображение в hex-виде.
+
+commit 15bde174576371373a017c31e606ff168d74a6dd
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri Sep 11 14:23:33 2026 +0500
+
+    Форматирование и синтаксис
+
+commit 60b1788bc07055e0eec05ccb3b27a4da3409635b
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Sat Sep 5 19:42:22 2026 +0500
+
+    Отладка работы с отрицательными значениями (вкладка АЦП)
+    (вкладка ДваДавления не проверялась)
+
+commit a070f91d12ddcb217cb73ed5d65b0bf76363c8a9
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Sep 3 10:40:18 2026 +0500
+
+    Работа с отрицательнвми значениями на вкладке АЦП.
+    На вкладве "Два давления" актуальность работы не проверялась,
+    скорее всего есть проблемы отображения.
+
+commit da95919c8d4c8e02d3f4832056211fcccff690a1
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Aug 24 22:34:51 2026 +0500
+
+    изенения в текущей версии
+
+commit a05eee4433cc999d7bd7c632e3661eca86b00ad3
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Aug 24 22:32:36 2026 +0500
+
+    переименование переводов
+
+commit 1ffe135006039b4cf4a1c9237c91b3f92ef48cba
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Aug 24 22:30:32 2026 +0500
+
+    переименован в bbi2-lab
+
+commit f1915e8294bbc53b8cf475eed16a4b755eed346f
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Aug 24 22:30:03 2026 +0500
+
+    изменена пиктограмка на ББИ-Lab
+
+commit 395efcf1f89e7e957c72d3f106c9389330b99069
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Sat Aug 8 12:49:41 2026 +0500
+
+    Починка отображение суммы/вычитания графиков при загрузке данных из
+    дампа.
+
+commit b132c61b2f1aa7ed4e639c61954a4906ff3d40fe
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri Aug 7 17:47:38 2026 +0500
+
+    - Добавлена кнопка Magnify для просмотра "растянутого" сигнала по оси Y
+    - Переработка механизма масштабирования графика, чтобы однотипно
+    работало по всем категориям (а том числе и с дампом)
+
+commit fedf1f50697f5ecc882bfa6c54e7bb992a000062
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Aug 6 15:29:23 2026 +0500
+
+    Поправлено имя архива для поставки
+
+commit 17e19286bcd9e2f508d6671bcdbcdc190d488b24
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Aug 6 15:18:37 2026 +0500
+
+    Переработка раскладки интерфейса
+    для добавления полей отображения энекодера
+
+commit 62a332be7b2b297325241efbe976be040fc9b190
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Aug 3 16:39:41 2026 +0500
+
+    Скрипты архивирования и подготовки дистрибутива переработаны,
+    внесены в папку исходников (чтобы не потерялись, чтобы были в git-е)
+
+commit 108700db7eeb30ce43025308c59805cccb773fcd
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Sun Aug 2 00:58:26 2026 +0500
+
+    Изменение алгоритма приема и отправки данных:
+    - копия полученных данные передается объекту-графику
+    - цикл отображения берет данные из объекта-графика
+    - все необходмые манипуляции с данными опеаются на данные в объекте-графике
+    - цикл приема данных из сети не влияет на дальнейшу обработку данных
+
+commit 3e8071d4e402bf6d2ddd375bbd03de4fdf37e79e
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 16:46:16 2026 +0500
+
+    Отображение амплитуды совмещенных каналов при вводе задержки
+
+commit d0d5aab9da1a97bc911a65cc5eca4dd595bbb9d2
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 13:47:31 2026 +0500
+
+    Доработка информативных сообщений
+
+commit 6c238cfe4a93d0934e99fad129df0b5020b7780b
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:54:40 2026 +0500
+
+    Переименование переменной в соответствии с именем класса (m_server -> m_network)
+
+commit 08525ec3db5244ff1154f95e18653c2534df9dd4
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:52:43 2026 +0500
+
+    Удален неиспользуемый файл
+
+commit 1cb2f95d51c93a8c09bac43ba0a1fde298951392
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:52:08 2026 +0500
+
+    Мелкие правки по настроке конфигурации
+
+commit c4ae8c7d067c747fca9fa9c656a7755f965285b5
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:13:16 2026 +0500
+
+    Мелкие правки по двойному давлению
+
+commit b5b10ec41f176f6940faa7cd26eb66488895d928
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:11:56 2026 +0500
+
+    Переименование касса
+
+commit b3bf4cd1df6984b5e8af0265f8338b4e8641a920
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:11:29 2026 +0500
+
+    Мелкие правки по сохранению конфигурации
+
+commit 017bd8f5285173981db4e8037a626d06eb1eb9e9
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:11:03 2026 +0500
+
+    Мелкие правки по сохранению конфигурации
+
+commit e6a7bc80d1c9da0e08cb913c5a1a6eccfc9bb942
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:10:34 2026 +0500
+
+    Удалено, устаревшее.
+
+commit e7fdaf6d99fc02d22fac65dab403793061d7336b
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:08:30 2026 +0500
+
+    Правка имени класса
+
+commit d26af434858cd0bf27c3be7f5d648fb428c4e219
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:03:38 2026 +0500
+
+    Правка имен классов по актуальности
+
+commit 98b954ed7434c404fe87dac3e2aefe9aee779339
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 20 11:02:59 2026 +0500
+
+    Доработка по обработке переводов
+
+commit 12dd7fd946706046a0b14f619b50b59a6529778f
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Wed Jul 15 16:56:30 2026 +0500
+
+    Применение задержки к наложенных графикам двух давлений, считанных из дампа.
+
+commit e2e78971b2efe84d831e4dbb36e71b9d87811eea
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Wed Jul 15 12:03:12 2026 +0500
+
+    Активирована вновь вкладка АЦП с двумя графиками по отображению данных на каналах.
+    Отлажен график в режиме "Накопление"
+
+commit 064968f5ff8e8830fdf3af2d04b3fa106eccfdfd
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jul 13 13:34:25 2026 +0500
+
+    Рабочие правки по редультатам работы
+
+commit 86fd95accee7568fc8b77783ea5c3d0955761cf0
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri Jul 10 16:15:20 2026 +0500
+
+    - Отладка записи дампа для двух датчиков давления по результатам работы
+    (Закончено)
+
+commit 5859645ba784bc824487946e9591499fdbbaa995
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Wed Jul 8 16:33:55 2026 +0500
+
+    - Отладка  записи дампа для двух датчиков давления
+    - Загрузка файла дампа и отображение на графике
+    (TODO - Сейчас весь дамп отрисовывается на граифке - надо сделать "перемотку")
+
+commit 25b8f4861b2efe0afb4edb7a90d1c69df3546deb
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Wed Jul 1 16:23:35 2026 +0500
+
+    - запись данных с двух датчиков давления в файл (raw) (дамп)
+    - просмотр дампа в таблице (TODO - на графике)
+    Черновик
+
+commit a3e74ce71e20c74562808b16e4654af4e53134d2
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Jun 25 16:21:44 2026 +0500
+
+    Немного переводов обновлено
+
+commit 0e09c710227d879c21dd98298988164e62e731ed
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Jun 25 16:21:18 2026 +0500
+
+    Добавлен код для записи принимаемых двух давление и вема в дамп-файл dataV2-yyyymmdd-hhmms.raw
+
+commit eec956ec507282542969f101a9553f51b560d2fa
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Jun 25 16:19:51 2026 +0500
+
+    Допиливание сборки и формирования комплекта поставки
+
+commit d6164468c686641911e06665bff4164eb84803b3
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Jun 25 16:19:13 2026 +0500
+
+    добавлено исключение (-bak *-bak-*
+
+commit 931197f07e1c08966e382f4bfc27c1346cb70e05
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Tue Jun 23 16:37:24 2026 +0500
+
+    Доработки по результатом работы
+    (Delay для графиком заблокирован, так как не отлажено)
+
+commit 07c7872688d361be2db4d5760b17b43bd1280222
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri May 29 10:42:59 2026 +0500
+
+    Проверка установки номера версии протокола Атлас
+
+commit ae026454cb5ef182929857cedf2eeffb28b1b680
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Wed May 27 15:29:03 2026 +0500
+
+    Вторая версия
+    - Добавлена вкладка для алгоритма Dual Pressure Transducer
+    - доработки для работы с 4-мя каналами
+
+commit 64d04b2092d359f5b650aaa70c1b0f3abed13c44
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Dec 29 14:42:27 2025 +0500
+
+    some code extracted in separated fiel
+
+commit 3cb27f0fc844d9f9e64d5ddff02da59c789bf70e
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Tue Nov 18 08:43:11 2025 +0500
+
+    Для сохранения актуальности проекта - очередные доработки
+
+commit 5cd63ceab2a3104ffb4d2b7532391ab87fb89229
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Jul 3 11:40:46 2025 +0500
+
+    Для сохранения актуальности проекта - очередные доработки
+
+commit 566ae8ce95a268f7e613b884f99094f7eeb62d3d
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Jul 3 11:34:40 2025 +0500
+
+    Для сохранения актуальности проекта - очередные доработки
+
+commit ddbfa7a0cb61c26e7fe7c2e2cb8fe0a45290cc3e
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Mon Jun 23 09:00:22 2025 +0500
+
+    сохранение текущего состояния (пара несущественных правок)
+
+commit 0d13e7d6e43fa6d8116d14d61802462ea7031dd1
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Wed Mar 26 17:49:24 2025 +0500
+
+    save current status of project
+
+commit 2cf1eb60f621b63136a9e33c590f4ff9d7f079f7
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri Mar 14 16:31:26 2025 +0500
+
+    saved curent status after debug
+
+commit 70974fd68d63aa2ae54acaba1073639790970cd9
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri Feb 21 14:00:38 2025 +0500
+
+    The good working status
+    Получение тайминга пакета и отображение графика в соответствии с временным диапазоном (ось Х).
+
+commit a9e55e17c9280a2ec23d50bb854a25ed471897e0
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Fri Feb 21 09:30:05 2025 +0500
+
+    saved current status
+
+commit 5dd01afd1141acdc8a0c12df90cc793b3ce5d632
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Wed Feb 19 15:39:58 2025 +0500
+
+    The good working status
+
+commit 25518234c853c5eb998a8fe41c8c19a303ea268b
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Thu Jan 23 16:31:02 2025 +0500
+
+    many customization options
+
+commit 01946d92258c6fd1d0305e3583d842c2f475f054
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Tue Jan 21 15:34:51 2025 +0500
+
+    debug locale installation
+
+commit 6ee0938436cc612395236e07b76713af58f4c936
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Tue Jan 21 14:25:40 2025 +0500
+
+    init repo with sources
+
+commit 0d610ca15ef34e84f8d6df4daa2c3bbc99456591
+Author: Aleksey Lekhtin <lav@oil-service.com>
+Date:   Tue Jan 21 14:18:06 2025 +0500
+
+    init repo with sources
+
+commit 2eef0467bed64351ce5d265a802a1e3f7df8e00f
+Author: Лехтин А.В. <lav@esservice.ru>
+Date:   Tue Jan 21 09:11:53 2025 +0000
+
+    Initial commit

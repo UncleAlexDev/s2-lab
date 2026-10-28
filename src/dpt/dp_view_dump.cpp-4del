@@ -1,0 +1,361 @@
+/**
+  \file   dp_view_dump.cpp
+  \author Aleksey Lekhtin
+  \brief  Double Pressure Raw file view data
+  \date   29.06.2026
+*/
+
+#include "dp_view_dump.h"
+#include "dbg.h"
+#include "dpt.h"
+#include "mw.h"
+#include "packet_atlas_t.h"
+#include "table.h"
+#include "wmsg.h"
+
+#include <QApplication>
+#include <QDialogButtonBox>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QPushButton>
+#include <QStandardItemModel>
+#include <QTableView>
+#include <QTimer>
+#include <QVBoxLayout>
+
+//---------------------------------------------------------
+ViewDump::ViewDump(QObject *parent) :
+    QObject{parent}
+{
+}
+
+//---------------------------------------------------------
+ViewDump::~ViewDump()
+{
+    delete m_table1;
+    delete m_table2;
+    delete m_table3;
+    delete m_table4;
+    delete m_table5;
+}
+
+//---------------------------------------------------------
+QWidget *ViewDump::create_page()
+{
+    auto *wgt = new QWidget();
+
+    m_table1 = create_table(tr("Pressure Sensor 1"));
+    m_table2 = create_table(tr("Pressure Sensor 2"));
+    m_table3 = create_table(tr("Hookload"));
+    m_table4 = create_table(tr("Encoder 1"));
+    m_table5 = create_table(tr("Encoder 2"));
+
+    auto *button_close = new QDialogButtonBox(QDialogButtonBox::Close);
+    QPushButton *button = button_close->button(QDialogButtonBox::Close);
+    if (button) {
+        auto *shortcut = new QShortcut(wgt);
+        shortcut->setKeys({QKeySequence("Backspace"), QKeySequence("Esc")});
+        connect(shortcut, &QShortcut::activated, button, &QPushButton::click);
+        QString tip = QStringLiteral("%1").arg(tr("Return back"));
+        auto keys = shortcut->keys();
+        for (const auto &k : std::as_const(keys)) {
+            tip += QString("\n[%1]").arg(k.toString());
+        }
+        button_close->setToolTip(tip);
+    }
+
+    connect(button_close, &QDialogButtonBox::rejected, this,
+        [this]()
+        {
+            DBG(1, "close dump");
+            delete m_table1;
+            m_table1 = nullptr;
+            delete m_table2;
+            m_table2 = nullptr;
+            delete m_table3;
+            m_table3 = nullptr;
+            delete m_table4;
+            m_table4 = nullptr;
+            delete m_table5;
+            m_table5 = nullptr;
+            DPT::dpt->gui_page()->setCurrentIndex(0);
+            DPT::dpt->gui_page()->removeWidget(m_gui_page);
+            m_gui_page->deleteLater();
+        });
+
+    //---------------------------------
+    m_title = new QLabel(tr("Dual Pressure Dump"));
+    m_message = new QLabel();
+
+    //---------------------------------
+    auto *tables_layout = new QHBoxLayout();
+    tables_layout->addWidget(m_table1);
+    tables_layout->addWidget(m_table2);
+    tables_layout->addWidget(m_table3);
+    tables_layout->addWidget(m_table4);
+    tables_layout->addWidget(m_table5);
+
+    //---------------------------------
+    auto *layout = new QVBoxLayout(wgt);
+    layout->addWidget(m_title, 0);
+    layout->addLayout(tables_layout, 100);
+    // layout->addSpacing(32);
+    layout->addStretch(0);
+    layout->addWidget(m_message, 0);
+    layout->addWidget(button_close, 0);
+    return wgt;
+}
+
+//---------------------------------------------------------
+TABLE *ViewDump::create_table(const QString &title)
+{
+    auto *table = new TABLE();
+    QStringList labels;
+    labels << "#" << title;
+    table->set_labels(labels);
+    table->horizontalHeader()->setSectionsClickable(false);
+    table->horizontalHeader()->setSortIndicatorShown(false);
+    table->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
+    // table->horizontalHeader()->setStyleSheet("QHeaderView::section { background: #d4d0c8; }");
+    table->horizontalHeader()->setStretchLastSection(true);
+
+    QFont fnt = table->horizontalHeader()->font();
+    fnt.setBold(true);
+    table->horizontalHeader()->setFont(fnt);
+    return table;
+}
+
+//---------------------------------------------------------
+QWidget *ViewDump::gui_page()
+{
+    return m_gui_page;
+}
+
+//---------------------------------------------------------
+void ViewDump::load_file(const QString &dirname)
+{
+    QDir dir;
+    if (!dirname.isEmpty()) {
+        dir.setPath(dirname);
+    } else {
+        dir.setPath(QDir::homePath());
+    }
+
+    if (!dir.exists()) {
+        WMSG::WMsg(MW::mw,
+            QString("%1\n\n%2").arg(tr("Directory not found"), QDir::toNativeSeparators(dir.absolutePath())),
+            QMessageBox::Warning);
+        return;
+    }
+
+    QString fn = QFileDialog::getOpenFileName(
+        MW::mw, tr("Select Dump File"), dir.absolutePath(), tr("Dump (*.raw);; All (*.*)"));
+    if (fn.isEmpty()) {
+        return;
+    }
+    m_fullname = fn;
+
+    MW::mw->statusbar_show(QString("%1: %2").arg(QObject::tr("dump file"), QDir::toNativeSeparators(m_fullname)), MW::Bold);
+
+    //-------------------------------------------
+    // открытие дампа и немного начальных проверок
+    QFile file(m_fullname);
+    if (!file.open(QIODevice::ReadOnly)) {
+        WMSG::WMsg(MW::mw, QString("%1\n\n%2").arg(tr("Can't open file"), QDir::toNativeSeparators(file.fileName())),
+            QMessageBox::Warning);
+        return;
+    }
+
+    DPT::dump_t dump{};
+    auto off = file.pos();
+    DBGF(2, "read header - offset: {:>6} (0x{:08x})", off, off);
+    if (file.read(reinterpret_cast<char *>(&dump.file_header), sizeof(dump.file_header)) != sizeof(dump.file_header)) {
+        file.close();
+        WMSG::WMsg(MW::mw, QString("%1\n\n%2").arg(tr("File too small"), QDir::toNativeSeparators(file.fileName())),
+            QMessageBox::Critical);
+        return;
+    }
+
+    // проверки
+    if (dump.file_header.sign != DPT::DP_SIGN) {
+        file.close();
+        WMSG::WMsg(MW::mw, QString("%1\n\n%2").arg(tr("Wrong signature"), QDir::toNativeSeparators(file.fileName())),
+            QMessageBox::Critical);
+        return;
+    }
+
+    if (dump.file_header.version != DPT::DP_VERSION1) {
+        file.close();
+        WMSG::WMsg(MW::mw, QString("%1\n\n%2").arg(tr("Wrong version"), QDir::toNativeSeparators(file.fileName())),
+            QMessageBox::Critical);
+        return;
+    }
+
+    if (file.atEnd()) {
+        file.close();
+        WMSG::WMsg(MW::mw, QString("%1\n\n%2").arg(tr("No records"), QDir::toNativeSeparators(file.fileName())),
+            QMessageBox::Information);
+        return;
+    }
+
+    //-------------------------------------------
+    // формирование экрана с дампом данных
+    m_gui_page = create_page();
+    m_gui_page->setWindowTitle(m_fullname);
+    DPT::dpt->gui_page()->addWidget(m_gui_page);
+    DPT::dpt->gui_page()->setCurrentIndex(1); // активация экрана
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QString errmsg;
+
+    //-------------------------------------------
+    // чтение дампа и заполнение таблиц
+    QString str;
+    int nblock = 0;
+    int nrows = 0, total_rows = 0;
+    int row_enc1 = 0;
+    int row_enc2 = 0;
+    bool ok = true;
+    const int max_recs = 5000;
+    qint64 hdr_sz = sizeof(dump.data.header);
+    qint64 off_prev = file.pos();
+
+    while (!file.atEnd() && ok) {
+
+        ++nblock;
+
+        // заголовок блока данных
+        off = file.pos();
+        if (file.read(reinterpret_cast<char *>(&dump.data.header), hdr_sz) != hdr_sz) {
+            errmsg = QString("%1\n\n(%2)").arg(file.errorString()).arg(file.error());
+            DBGF(0, "{}", errmsg.toStdString());
+            break;
+        }
+        DBGF(2, "\n[{:4}]", (off - off_prev));
+        DBGF(2, "offset: {:>6} (0x{:08x}) read {:4} bytes, block {} (#{:>2} 0x{:08X}), nrecs: {}", off, off, hdr_sz,
+            nblock, (int)dump.data.header.block_number, (int)dump.data.header.block_number, dump.data.header.npnts);
+        off_prev = off;
+
+        if (dump.data.header.ctrlw.check_byte != DPT::DP_DUMP_CHECK_BYTE) {
+            errmsg = QString("%1 #%2\n(offset in file: 0x%3)\n\n%4: 0x%5")
+                         .arg("Incorrect control byte in header of block")
+                         .arg(nblock)
+                         .arg(off, 8, 16, QChar('0'))
+                         .arg(tr("Control byte"))
+                         .arg(dump.data.header.ctrlw.check_byte, 8, 16, QChar('0'));
+            DBGF(0, "{}", errmsg.toStdString());
+            break;
+        }
+
+        if (dump.data.header.block_number != nblock) {
+            errmsg = QString("%1 #%2\n(offset in file: 0x%3)\n\n%4: %5 (0x%6)\n%7: %8 (0x%9)\n")
+                         .arg("Incorrect header of block")
+                         .arg(nblock)
+                         .arg(off, 8, 16, QChar('0'))
+                         .arg(tr("Block number"))
+                         .arg(dump.data.header.block_number)
+                         .arg(dump.data.header.block_number, 8, 16, QChar('0'))
+                         .arg(tr("Expected block"))
+                         .arg(nblock)
+                         .arg(nblock);
+            DBGF(0, "{}", errmsg.toStdString());
+            break;
+        }
+
+        if (dump.data.header.npnts != packet_atlas_t::npnts) {
+            errmsg = QString("%1 #%2 \n(offset in file: 0x%3)\n\n%4: %5 (0x%6)\n%7: %8")
+                         .arg("Wrong number of records of block")
+                         .arg(nblock)
+                         .arg(off, 8, 16, QChar('0'))
+                         .arg(tr("records in a block"))
+                         .arg(dump.data.header.npnts)
+                         .arg(dump.data.header.npnts, 8, 16, QChar('0'))
+                         .arg(tr("expected records"))
+                         .arg(packet_atlas_t::npnts);
+            DBGF(0, "{}", errmsg.toStdString());
+            ok = false;
+            break;
+        }
+
+        // read 3 data package - pressure 1 pressure2 hookload
+        auto nrecs = dump.data.header.npnts;
+        nrows = m_table1->rowCount();
+        for (auto table : {m_table1, m_table2, m_table3}) {
+
+            QString data_name = "???";
+            if (table == m_table1) {
+                data_name = "P1";
+            } else if (table == m_table2) {
+                data_name = "P2";
+            } else if (table == m_table3) {
+                data_name = "HK";
+            }
+
+            size_t data_size = nrecs * sizeof(uint32_t);
+            off = file.pos();
+            QByteArray bytes = file.read((qint64)data_size);
+            if ((size_t)bytes.size() != data_size) {
+                DBGF(2, "    ERROR: offset: {:>6} (0x{:08x}), block {:>2}, size: {}", off, off,
+                    (int)dump.data.header.block_number, bytes.size());
+                errmsg = QString("%1\n\n(%2)").arg(file.errorString()).arg(file.error());
+                DBGF(0, "{}", errmsg.toStdString());
+                ok = false;
+                break;
+            }
+            DBGF(2, "offset: {:>6} (0x{:08x}) {:>2} read {:4} bytes", off, off, data_name.toStdString(), data_size);
+
+            if (nrows < max_recs) {
+                auto row = table->rowCount();
+#if 1
+                const auto *ptr = reinterpret_cast<const double *>(bytes.constData());
+                for (size_t i = 0; i < nrecs; ++i) {
+                    QStringList table_record{QString::number(++row)};
+                    table_record.append(QString::number(ptr[i], 'f', 6));
+                    table->add_record(table_record);
+                }
+#else
+                const auto *ptr = reinterpret_cast<const uint32_t *>(bytes.constData());
+                for (size_t i = 0; i < nrecs; ++i) {
+                    QStringList table_record{QString::number(++row)};
+                    table_record.append(QString::number(ptr[i]));
+                    table->add_record(table_record);
+                }
+#endif
+            }
+        }
+        total_rows += nrecs;
+
+        // add encoders
+        if (nrows < max_recs) {
+            m_table4->add_record({QString::number(++row_enc1), QString::number(dump.data.header.encoder1, 'f', 1)});
+            m_table5->add_record({QString::number(++row_enc2), QString::number(dump.data.header.encoder2, 'f', 1)});
+        }
+
+        DBGF(2, "rows: {}, total: {}", m_table1->rowCount(), total_rows);
+    }
+
+    file.close();
+
+    if (total_rows >= max_recs) {
+        m_message->setText(QString("Only %1 entries shown...").arg(max_recs));
+    }
+
+    auto title = QString("%1 (%2 %3)").arg(m_title->text(), QString::number(total_rows), tr("records"));
+    m_title->setText(title);
+
+    // QTimer::singleShot(0, this,
+    //     [this]()
+    //     {
+    //         for (auto table : {m_table1, m_table2, m_table3}) {
+    //             table->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    //             // table->doItemsLayout();
+    //             table->resizeColumnsToContents();
+    //         }
+    //     });
+
+    QApplication::restoreOverrideCursor();
+    if (!errmsg.isEmpty()) {
+        WMSG::WMsg(MW::mw, errmsg, QMessageBox::Critical);
+    }
+}

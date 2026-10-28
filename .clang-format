@@ -1,0 +1,44 @@
+---
+BasedOnStyle: LLVM
+Language: Cpp
+#AccessModifierOffset: -4
+ColumnLimit: 120
+InsertNewlineAtEOF: true
+IndentWidth: 4
+TabWidth: 4
+
+PackConstructorInitializers: Never
+BreakConstructorInitializers: AfterColon
+BreakConstructorInitializersBeforeComma: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+
+AllowShortFunctionsOnASingleLine: None
+AllowShortLambdasOnASingleLine: None
+AllowShortBlocksOnASingleLine: Never
+
+BinPackArguments: false
+AllowAllArgumentsOnNextLine: false
+BinPackParameters: false
+AllowAllParametersOfDeclarationOnNextLine: false
+
+#AlignConsecutiveAssignments: false
+#AlignConsecutiveDeclarations: false
+#AlignOperands: false
+AlwaysBreakTemplateDeclarations: Yes
+AlignAfterOpenBracket: false
+
+IndentCaseBlocks: true
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: false
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeLambdaBody: true
+  #BeforeLambdaExpression: true
+
+...

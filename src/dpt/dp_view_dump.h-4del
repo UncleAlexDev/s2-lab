@@ -1,0 +1,47 @@
+/**
+  \file   dp_view_dump.h
+  \author Aleksey Lekhtin
+  \brief  Double Pressure Raw file view data
+  \date   29.06.2026
+*/
+
+#ifndef DP_VIEW_DUMP_H
+#define DP_VIEW_DUMP_H
+
+#include <QLabel>
+#include <QObject>
+#include <QPushButton>
+#include <QStandardItemModel>
+#include <QTableView>
+#include <QWidget>
+
+class TABLE;
+
+class ViewDump : public QObject
+{
+    Q_OBJECT;
+
+  public:
+    explicit ViewDump(QObject *parent = nullptr);
+    ~ViewDump() override;
+
+    QWidget *gui_page();
+    void load_file(const QString &dirname = {});
+
+  private:
+    QWidget *create_page();
+    static TABLE *create_table(const QString &title);
+
+  private:
+    QWidget *m_gui_page{};
+    QString m_fullname{};
+    QLabel *m_title{};
+    QLabel *m_message{};
+    TABLE *m_table1{};
+    TABLE *m_table2{};
+    TABLE *m_table3{};
+    TABLE *m_table4{};
+    TABLE *m_table5{};
+};
+
+#endif // DP_VIEW_DUMP_H

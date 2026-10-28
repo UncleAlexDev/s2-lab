@@ -1,68 +1,59 @@
-# Prerequisites
-*.d
+zzz
+xxx
+s2
+s2.cfg
+s2.log
+s2-lab
+s2-lab.cfg
+s2-lab.log
 
-# Compiled Object files
+dist
+dist/*
+
+*.off
+*-off
+*.raw
+*.bak
+*-bak
+*-bak-*
+
+*-debug
+*.pro.user
+*.log
+*.d
 *.slo
 *.lo
 *.o
 *.obj
-
-# Precompiled Headers
 *.gch
 *.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
-*.so.*
-
-# Fortran module files
 *.mod
 *.smod
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
-
-# Executables
 *.exe
 *.out
 *.app
-
-# Build directories
-build/
-Build/
-build-*/
-
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
+Users*AppData*
+.qtcreator
+.qmake.stash
 Makefile
-install_manifest.txt
-compile_commands.json
-
-# Temporary files
-*.tmp
-*.log
-*.bak
-*.swp
-
-# vcpkg
-vcpkg_installed/
-
-# debug information files
-*.dwo
-
-# test output & cache
-Testing/
-.cache/
+Makefile.Debug
+Makefile.Release
+debug/
+release/
+Debug/
+Release/
+build-Debug/
+build-Release/
+build/*
+build-*/*
+dist/*
+dist-*/*
+object_script.*
+*.pro.user
